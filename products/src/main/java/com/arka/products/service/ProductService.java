@@ -15,7 +15,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public Mono<Product> saveProduct(Product product){
-        System.out.println("llego 2 y llevo" + product.getDescription());
+        //System.out.println("llego 2 y llevo" + product.getDescription());
         return productRepository.save(product);
     }
 
@@ -31,6 +31,7 @@ public class ProductService {
         return productRepository.findById(product.getId())
                 .flatMap(existing -> {
                     existing.setDescription(product.getDescription());
+                    existing.setPrice(product.getPrice());
                     existing.setName(product.getName());
                     existing.setCategory(product.getCategory());
                     existing.setStatus(true);

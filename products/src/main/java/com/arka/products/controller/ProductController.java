@@ -1,6 +1,7 @@
 package com.arka.products.controller;
 
 import com.arka.products.dto.ProductDto;
+import com.arka.products.dto.ProductSaveDto;
 import com.arka.products.entity.Product;
 import com.arka.products.mapper.ProductMapper;
 import com.arka.products.service.ProductService;
@@ -22,10 +23,26 @@ public class ProductController {
     private final ProductMapper productMapper;
 
     @PostMapping
-    public Mono<ProductDto> saveProduct(@RequestBody ProductDto productDto){
-        System.out.println("llego y llevo" + productDto.getDescription());
+    public Mono<ProductSaveDto> saveProduct(@RequestBody ProductDto productDto){
         return productService.saveProduct(productMapper.toEntity(productDto))
-                .map(productMapper::toDto);
+                .map(productMapper::toDto)
+                .map(saveProductDto -> {
+                    ProductSaveDto response = new ProductSaveDto();
+                    response.setMensaje("Producto creado con exito");
+                    response.setProductDto(saveProductDto);
+                    return response;
+                }).onErrorResume(error -> {
+                    // Log del error
+                    System.out.println("Error al guardar producto: " + error.getMessage() + error);
+
+                    // Construimos una respuesta con mensaje de error
+                    ProductSaveDto errorResponse = new ProductSaveDto();
+                    errorResponse.setMensaje("Error al guardar el producto: " + error.getMessage());
+                    errorResponse.setProductDto(null);
+
+                    // Retornamos un Mono con la respuesta de error
+                    return Mono.just(errorResponse);
+                });
     }
 
     @PostMapping(value = "/products", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
