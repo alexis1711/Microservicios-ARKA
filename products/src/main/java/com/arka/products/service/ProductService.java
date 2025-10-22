@@ -4,6 +4,7 @@ import com.arka.products.dto.ProductDto;
 import com.arka.products.entity.Product;
 import com.arka.products.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -11,6 +12,9 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+
+    @Value("${db.mongo.url}")
+    private String parametro;
 
     private final ProductRepository productRepository;
 
@@ -24,6 +28,7 @@ public class ProductService {
     }
 
     public Flux<Product> getProducts(){
+        System.out.println("Valor parametro: " + parametro);
         return productRepository.findAll();
     }
 
