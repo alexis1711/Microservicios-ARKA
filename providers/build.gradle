@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store:3.1.1'
 // ===============================
 	// Spring Boot Reactive
 	// ===============================
@@ -36,7 +37,7 @@ dependencies {
 	// R2DBC (reactive MySQL)
 	// ===============================
 	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-	implementation 'io.asyncer:r2dbc-mysql' // Driver R2DBC MySQL
+	implementation 'org.postgresql:r2dbc-postgresql:1.0.5.RELEASE'
 
 	// ===============================
 	// Lombok

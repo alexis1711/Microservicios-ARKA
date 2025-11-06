@@ -19,7 +19,7 @@ public class StockRepositoryImpl implements StockRepository {
     @Override
     public Flux<Stock> getStock(Stock stock) {
         return client
-                .sql("CALL get_stock(:store_id, :product_id, :provider_id)")
+                .sql("SELECT * FROM get_stock(:store_id, :product_id, :provider_id)")
                 .bind("store_id", Parameter.fromOrEmpty(stock.getStore_id(), Long.class))
                 .bind("product_id", Parameter.fromOrEmpty(stock.getProduct_id(), String.class))
                 .bind("provider_id", Parameter.fromOrEmpty(stock.getProvider_id(), Long.class))
@@ -40,7 +40,7 @@ public class StockRepositoryImpl implements StockRepository {
     @Override
     public Mono<Void> upsertStock(Stock stock) {
         return client
-                .sql("CALL upsert_stock(:store_id, :product_id, :provider_id, :amount)")
+                .sql("SELECT upsert_stock(:store_id, :product_id, :provider_id, :amount)")
                 .bind("store_id", stock.getStore_id())
                 .bind("product_id", stock.getProduct_id())
                 .bind("provider_id", stock.getProvider_id())
@@ -51,7 +51,7 @@ public class StockRepositoryImpl implements StockRepository {
     @Override
     public Mono<Void> updateAmount(Stock stock, int cantidad) {
         return client
-                .sql("CALL update_stock_amount(:store_id, :product_id, :provider_id, :cantidad)")
+                .sql("SELECT update_stock_amount(:store_id, :product_id, :provider_id, :cantidad)")
                 .bind("store_id", stock.getStore_id())
                 .bind("product_id", stock.getProduct_id())
                 .bind("provider_id", stock.getProvider_id())
