@@ -22,7 +22,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build JAR with Gradle
-        working-directory: ./user-service
+        working-directory: ./users
         run: ./gradlew clean build -x test
 
       - name: Build Docker image
