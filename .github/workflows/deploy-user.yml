@@ -21,6 +21,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+
+      - name: Grant execute permission for Gradle wrapper
+        working-directory: ./users
+        run: chmod +x gradlew
+
       - name: Build JAR with Gradle
         working-directory: ./users
         run: ./gradlew clean build -x test
