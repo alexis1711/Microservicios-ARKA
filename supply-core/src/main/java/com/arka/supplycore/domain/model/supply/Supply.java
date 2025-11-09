@@ -18,6 +18,12 @@ public class Supply {
     status = SupplyStatus.CREATED;
   }
 
+  public Supply(String supplyId, SupplyStatus status) {
+    this.supplyId = supplyId.toLowerCase();
+    this.status = status;
+    total = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+  }
+
   private SupplyDetail findDetail(String productId) {
     return details.stream()
       .filter(detail -> detail.getProductId().equals(productId))
@@ -72,7 +78,7 @@ public class Supply {
     }
   }
 
-  public void processSuply() {
+  public void processSupply() {
     switch (status) {
       case CANCELLED:
         throw new IllegalStateException("The supply has been cancelled");
@@ -105,6 +111,10 @@ public class Supply {
 
   public List<SupplyDetailView> getDetails() {
     return List.copyOf(details);
+  }
+
+  public SupplyStatus getStatus() {
+    return status;
   }
 
   @Override
