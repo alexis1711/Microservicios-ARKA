@@ -1,9 +1,12 @@
 package com.arka.supplycore.presentation.rest;
 
+import com.arka.supplycore.application.dto.AlterDetailOutput;
 import com.arka.supplycore.application.dto.FailedProductDto;
 import com.arka.supplycore.application.dto.SupplyInput;
 import com.arka.supplycore.application.usecase.AddDetailsToOrder;
 import com.arka.supplycore.application.usecase.RegisterSupplyOrder;
+import com.arka.supplycore.application.usecase.UpdateOrderDetails;
+import com.arka.supplycore.presentation.dto.SupplyDetailDTO;
 import com.arka.supplycore.presentation.dto.SupplyDetailResponseDTO;
 import com.arka.supplycore.presentation.mapper.SupplyControllerMapper;
 import java.net.URI;
@@ -13,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +32,7 @@ public class SupplyController {
   private final RegisterSupplyOrder registerSupplyOrder;
   private final AddDetailsToOrder addDetailsToOrder;
   private final SupplyControllerMapper supplyControllerMapper;
+  private final UpdateOrderDetails updateOrderDetails;
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<Map<String, String>>> create() {
@@ -40,25 +45,35 @@ public class SupplyController {
       .subscribeOn(Schedulers.boundedElastic());
   }
 
-  @PostMapping(value = "/{id}/details", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/{id}/add-products", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<SupplyDetailResponseDTO>> addItems(@PathVariable String id, @RequestBody List<SupplyInput> supplyInputList) {
     return Mono
       .fromCallable(() -> addDetailsToOrder.execute(id, supplyInputList))
-      .map(rsp -> {
-        SupplyDetailResponseDTO rspDto = supplyControllerMapper.toDetailResponse(rsp);
-
-        if (rsp.failedProducts() == null || rsp.failedProducts().isEmpty()) {
-          return ResponseEntity.status(HttpStatus.CREATED).body(rspDto);
-        }
-
-        List<FailedProductDto> failedProducts = rsp.failedProducts();
-
-        if (failedProducts.size() == supplyInputList.size()) {
-          return ResponseEntity.unprocessableEntity().body(rspDto);
-        }
-
-        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(rspDto);
-      })
+      .map(rsp -> parseUseCaseResponse(rsp, supplyInputList))
       .subscribeOn(Schedulers.boundedElastic());
+  }
+
+  @PatchMapping(value = "/{supplyId}/update-products", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<SupplyDetailResponseDTO>> updateItems(@PathVariable String supplyId, @RequestBody SupplyDetailDTO detail) {
+    List<SupplyInput> productsInput =detail.getProducts().stream().map(supplyControllerMapper::toDetailItemInput).toList();
+    return Mono.fromCallable(() -> updateOrderDetails.execute(supplyId, productsInput))
+      .map(rsp -> parseUseCaseResponse(rsp, productsInput))
+      .subscribeOn(Schedulers.boundedElastic());
+  }
+
+  private ResponseEntity<SupplyDetailResponseDTO> parseUseCaseResponse(AlterDetailOutput usecaseRsp, List<SupplyInput> supplyInputList) {
+    SupplyDetailResponseDTO rspDto = supplyControllerMapper.toDetailResponse(usecaseRsp);
+
+    if (usecaseRsp.failedProducts() == null || usecaseRsp.failedProducts().isEmpty()) {
+      return ResponseEntity.status(HttpStatus.CREATED).body(rspDto);
+    }
+
+    List<FailedProductDto> failedProducts = usecaseRsp.failedProducts();
+
+    if (failedProducts.size() == supplyInputList.size()) {
+      return ResponseEntity.unprocessableEntity().body(rspDto);
+    }
+
+    return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(rspDto);
   }
 }
