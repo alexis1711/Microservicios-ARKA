@@ -2,6 +2,7 @@ package com.arka.supplycore.infrastructure.persistence.mapper;
 
 import com.arka.supplycore.domain.model.supply.Supply;
 import com.arka.supplycore.domain.model.supply.SupplyDetailView;
+import com.arka.supplycore.domain.model.supply.SupplyStatus;
 import com.arka.supplycore.infrastructure.persistence.entity.SupplyDetailEntity;
 import com.arka.supplycore.infrastructure.persistence.entity.SupplyEntity;
 import java.math.BigDecimal;
@@ -63,6 +64,7 @@ class SupplyMapperTest {
     SupplyEntity supplyEntity = new SupplyEntity();
     supplyEntity.setId("entity-1");
     supplyEntity.setTotal(BigDecimal.TEN.setScale(2, RoundingMode.HALF_UP));
+    supplyEntity.setStatus(SupplyStatus.CREATED);
 
     List<SupplyDetailEntity> details = new ArrayList<>();
     details.add(new SupplyDetailEntity("product1", 1, BigDecimal.TEN.setScale(2, RoundingMode.HALF_UP)));

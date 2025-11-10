@@ -2,7 +2,9 @@ package com.arka.supplycore.infrastructure.adapters;
 
 import com.arka.supplycore.domain.model.supply.Supply;
 import com.arka.supplycore.domain.repository.SupplyRepository;
+import com.arka.supplycore.infrastructure.persistence.entity.SupplyDetailEntity;
 import com.arka.supplycore.infrastructure.persistence.mapper.SupplyMapper;
+import java.math.BigDecimal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,7 +17,10 @@ public class SupplyRepositoryAdapter implements SupplyRepository {
 
   @Override
   public Optional<Supply> findById(String supplyId) {
-    return Optional.empty();
+    Supply supply = new Supply(supplyId);
+    supply.addDetail(new SupplyDetailEntity("test-product", 5, new BigDecimal("7.50")));
+
+    return Optional.of(supply);
   }
 
   @Override

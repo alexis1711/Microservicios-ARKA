@@ -1,5 +1,6 @@
 package com.arka.supplycore.domain.model.supply;
 
+import com.arka.supplycore.application.exception.BusinessException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Supply {
+  private static final String CANT_ALTER_SUPPLY = "The supply is in a state that can't be altered";
   private final String supplyId;
   private final Set<SupplyDetail> details = new HashSet<>();
   private BigDecimal total;
@@ -31,9 +33,13 @@ public class Supply {
       .orElse(null);
   }
 
-  public void addDetail(SupplyDetailView supplyDetail) {
+  public void addDetail(SupplyDetailView supplyDetail) throws IllegalStateException, BusinessException {
+    if (!canAlterSupply()) {
+      throw new IllegalStateException(CANT_ALTER_SUPPLY);
+    }
+
     if (findDetail(supplyDetail.getProductId()) != null) {
-      throw new IllegalStateException("The product is already registered in the supply order");
+      throw new BusinessException("The product is already registered in the supply order");
     }
 
     details.add(new SupplyDetail(supplyDetail.getProductId(), supplyDetail.getQuantity(), supplyDetail.getPrice()));
@@ -41,7 +47,11 @@ public class Supply {
     summarizeDetails();
   }
 
-  public void updateDetail(SupplyDetailView supplyDetail) {
+  public void updateDetail(SupplyDetailView supplyDetail) throws IllegalStateException {
+    if (!canAlterSupply()) {
+      throw new IllegalStateException(CANT_ALTER_SUPPLY);
+    }
+
     SupplyDetail detail = findDetail(supplyDetail.getProductId());
 
     if (detail == null) {
@@ -53,7 +63,11 @@ public class Supply {
     summarizeDetails();
   }
 
-  public void removeDetail(SupplyDetailView supplyDetail) {
+  public void removeDetail(SupplyDetailView supplyDetail) throws IllegalStateException {
+    if (!canAlterSupply()) {
+      throw new IllegalStateException(CANT_ALTER_SUPPLY);
+    }
+
     SupplyDetail detail = findDetail(supplyDetail.getProductId());
 
     if (detail == null) {
@@ -139,7 +153,7 @@ public class Supply {
   }
 
   /**
-   * shows if this Supply it's in a state which accept any modification or deletion
+   * shows if this Supply it's in a state that accept any modification or deletion
    * @return true if and only if status is {@link SupplyStatus#CREATED}
    */
   public boolean canAlterSupply() {
