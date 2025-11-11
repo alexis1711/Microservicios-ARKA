@@ -3,7 +3,7 @@ FROM eclipse-temurin:21.0.8_9-jdk-alpine
 RUN jlink --no-header-files --no-man-pages --compress=zip-8 \
 --strip-debug --add-modules java.base,java.logging,java.naming\
 ,java.management,java.instrument,java.desktop,java.security.jgss\
- --output /jre
+,jdk.unsupported --output /jre
 
 FROM alpine:3.21.4
 WORKDIR /app
