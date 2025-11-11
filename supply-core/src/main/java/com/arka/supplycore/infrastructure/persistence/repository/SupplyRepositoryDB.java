@@ -1,6 +1,8 @@
 package com.arka.supplycore.infrastructure.persistence.repository;
 
-// TODO: define database to use
-public interface SupplyRepositoryDB {
+import com.arka.supplycore.infrastructure.persistence.entity.SupplyEntity;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+
+public interface SupplyRepositoryDB extends ReactiveMongoRepository<SupplyEntity, String> {
 }
 

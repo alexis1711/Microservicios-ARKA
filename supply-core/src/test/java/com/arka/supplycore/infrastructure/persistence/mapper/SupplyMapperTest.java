@@ -75,7 +75,7 @@ class SupplyMapperTest {
 
     Assertions.assertNotNull(supply);
     Assertions.assertEquals(supply.getSupplyId(), supplyEntity.getId());
-    Assertions.assertNotEquals(supply.getTotal(), supplyEntity.getTotal());
+    Assertions.assertEquals(supply.getTotal(), supplyEntity.getTotal());
     Assertions.assertEquals(supply.getDetails().size(), supplyEntity.getDetails().size());
     IntStream.range(0, supply.getDetails().size())
       .forEach(i -> {

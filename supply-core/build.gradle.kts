@@ -31,6 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.mapstruct:mapstruct:$mapStructVersion")
     implementation("com.fasterxml.uuid:java-uuid-generator:$uuidLibVersion")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.projectlombok:lombok")

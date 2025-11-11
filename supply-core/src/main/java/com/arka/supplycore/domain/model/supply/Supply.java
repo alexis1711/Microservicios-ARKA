@@ -3,6 +3,7 @@ package com.arka.supplycore.domain.model.supply;
 import com.arka.supplycore.application.exception.BusinessException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,10 +21,16 @@ public class Supply {
     status = SupplyStatus.CREATED;
   }
 
-  public Supply(String supplyId, SupplyStatus status) {
+  public Supply(String supplyId, SupplyStatus status, BigDecimal total, Collection<SupplyDetailView> details) {
     this.supplyId = supplyId.toLowerCase();
     this.status = status;
-    total = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    this.total = total;
+
+    List<SupplyDetail> detailsList = details.stream()
+      .map(detail -> new SupplyDetail(detail.getProductId(), detail.getQuantity(), detail.getPrice()))
+      .toList();
+
+    this.details.addAll(detailsList);
   }
 
   private SupplyDetail findDetail(String productId) {

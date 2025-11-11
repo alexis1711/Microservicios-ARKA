@@ -17,8 +17,7 @@ public class SupplyExceptionHandler {
   public Mono<ResponseEntity<ErrorResponse>> handleDataNotFoundException(DataNotFoundException ex, ServerWebExchange exchange) {
     return Mono
       .just(
-        new ErrorResponse("NOT_FOUND", "Requested resource was not found", LocalDateTime.now(), exchange.getRequest().getPath().value())
-      )
+        new ErrorResponse("NOT_FOUND", "Requested resource was not found", LocalDateTime.now(), exchange.getRequest().getPath().value()))
       .map(err -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(err));
   }
 
@@ -26,8 +25,21 @@ public class SupplyExceptionHandler {
   public Mono<ResponseEntity<ErrorResponse>> handleBusinessException(BusinessException ex, ServerWebExchange exchange) {
     return Mono
       .just(
-        new ErrorResponse("UNPROCESSABLE_ENTITY", ex.getMessage(), LocalDateTime.now(), exchange.getRequest().getPath().value())
-      )
+        new ErrorResponse("UNPROCESSABLE_ENTITY", ex.getMessage(), LocalDateTime.now(), exchange.getRequest().getPath().value()))
       .map(err -> ResponseEntity.unprocessableEntity().body(err));
+  }
+
+  @ExceptionHandler(IllegalStateException.class)
+  public Mono<ResponseEntity<ErrorResponse>> handleIllegalStateException(IllegalStateException ex, ServerWebExchange exchange) {
+    return Mono
+      .just(
+        new ErrorResponse("UNPROCESSABLE_ENTITY", ex.getMessage(), LocalDateTime.now(), exchange.getRequest().getPath().value()))
+      .map(err -> ResponseEntity.unprocessableEntity().body(err));
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public Mono<ResponseEntity<ErrorResponse>> handleIllegalArgumentException(IllegalArgumentException ex, ServerWebExchange exchange) {
+    return Mono.just(new ErrorResponse("BAD_REQUEST", ex.getMessage(), LocalDateTime.now(), exchange.getRequest().getPath().value()))
+      .map(err -> ResponseEntity.badRequest().body(err));
   }
 }
