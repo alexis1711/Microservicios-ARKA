@@ -23,15 +23,15 @@ jobs:
 
 
       - name: Grant execute permission for Gradle wrapper
-        working-directory: ./suply-core
+        working-directory: ./supply-core
         run: chmod +x gradlew
 
       - name: Build JAR with Gradle
-        working-directory: ./suply-core
+        working-directory: ./supply-core
         run: ./gradlew clean build -x test
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/supply-service:latest ./suply-core
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/supply-service:latest ./supply-core
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
@@ -47,7 +47,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY3 }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/supply-service:latest
-            docker stop suply-service || true
+            docker stop supply-service || true
             docker rm supply-service || true
             docker run -d \
               --name supply-service \
