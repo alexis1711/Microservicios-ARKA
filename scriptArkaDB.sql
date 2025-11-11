@@ -168,6 +168,21 @@ CREATE OR REPLACE FUNCTION update_stock_amount(
     p_provider_id BIGINT,
     p_delta INT
 )
+
+-- 🔹 1️⃣ Obtener el stock actual
+    SELECT amount INTO v_current_amount
+    FROM stock_store
+    WHERE store_id = p_store_id
+      AND product_id = p_product_id
+      AND provider_id = p_provider_id
+    FOR UPDATE;  -- bloquea la fila mientras se actualiza (opcional, pero recomendable si hay concurrencia)
+
+    -- 🔹 3️⃣ Si el delta es negativo, validar que haya suficiente stock
+    IF p_delta < 0 AND ABS(p_delta) > v_current_amount THEN
+        RAISE EXCEPTION 'No hay suficiente stock disponible. Stock actual: %, intento de disminuir: %',
+            v_current_amount, ABS(p_delta);
+    END IF;
+
 RETURNS VOID AS $$
 BEGIN
     UPDATE stock_store
