@@ -48,3 +48,4 @@ tasks.withType<Test> {
 tasks.withType<Jar> {
     archiveFileName.set(project.name + (if (archiveClassifier.orNull.isNullOrEmpty()) "" else "-${archiveClassifier.get()}") + ".${archiveExtension.get()}")
 }
+
