@@ -3,6 +3,7 @@ package com.arka.supplycore.infrastructure.config;
 import com.arka.supplycore.application.service.ProductValidationService;
 import com.arka.supplycore.application.service.SupplyOrderValidationService;
 import com.arka.supplycore.application.usecase.AddDetailsToOrder;
+import com.arka.supplycore.application.usecase.DeleteDetailItems;
 import com.arka.supplycore.application.usecase.RegisterSupplyOrder;
 import com.arka.supplycore.application.usecase.UpdateOrderDetails;
 import com.arka.supplycore.domain.commons.IdGenerator;
@@ -32,5 +33,10 @@ public class SupplyUseCaseProducer {
   @Bean
   public UpdateOrderDetails updateOrderDetails() {
     return new UpdateOrderDetails(supplyRepository, supplyOrderValidationService, productValidationService);
+  }
+
+  @Bean
+  public DeleteDetailItems deleteDetailItems() {
+    return new DeleteDetailItems(supplyRepository, supplyOrderValidationService);
   }
 }

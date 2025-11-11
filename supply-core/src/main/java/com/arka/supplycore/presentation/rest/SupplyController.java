@@ -4,6 +4,7 @@ import com.arka.supplycore.application.dto.AlterDetailOutput;
 import com.arka.supplycore.application.dto.FailedProductDto;
 import com.arka.supplycore.application.dto.SupplyInput;
 import com.arka.supplycore.application.usecase.AddDetailsToOrder;
+import com.arka.supplycore.application.usecase.DeleteDetailItems;
 import com.arka.supplycore.application.usecase.RegisterSupplyOrder;
 import com.arka.supplycore.application.usecase.UpdateOrderDetails;
 import com.arka.supplycore.presentation.dto.SupplyDetailDTO;
@@ -33,6 +34,7 @@ public class SupplyController {
   private final AddDetailsToOrder addDetailsToOrder;
   private final SupplyControllerMapper supplyControllerMapper;
   private final UpdateOrderDetails updateOrderDetails;
+  private final DeleteDetailItems deleteDetailItems;
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<Map<String, String>>> create() {
@@ -59,6 +61,18 @@ public class SupplyController {
     return Mono.fromCallable(() -> updateOrderDetails.execute(supplyId, productsInput))
       .map(rsp -> parseUseCaseResponse(rsp, productsInput))
       .subscribeOn(Schedulers.boundedElastic());
+  }
+
+  @PostMapping(value = "/{supplyId}/delete-products", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<Void>> deleteItems(@PathVariable String supplyId, @RequestBody SupplyDetailDTO detail) {
+    List<SupplyInput> productsInput = detail.getProducts().stream().map(supplyControllerMapper::toDetailItemInput).toList();
+    return Mono.fromCallable(() -> {
+        deleteDetailItems.execute(supplyId, productsInput);
+        return null;
+      })
+      .subscribeOn(Schedulers.boundedElastic())
+      .then(Mono.just(ResponseEntity.ok().build()));
+
   }
 
   private ResponseEntity<SupplyDetailResponseDTO> parseUseCaseResponse(AlterDetailOutput usecaseRsp, List<SupplyInput> supplyInputList) {

@@ -30,7 +30,7 @@ public record UpdateOrderDetails(SupplyRepository supplyRepository, SupplyOrderV
       .collect(Collectors.toCollection(ArrayList::new));
 
     existingProducts.forEach(input -> updateSupplyProduct(supply, input, updatedProducts, failedProducts));
-    supplyRepository.save(supply);
+      supplyRepository.save(supply);
     return new AlterDetailOutput(supplyId, updatedProducts, failedProducts);
   }
 

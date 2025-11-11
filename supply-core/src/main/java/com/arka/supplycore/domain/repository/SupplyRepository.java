@@ -6,6 +6,5 @@ import java.util.Optional;
 public interface SupplyRepository {
   Optional<Supply> findById(String supplyId);
   void save(Supply supply);
-  void update(Supply supply);
   void delete(Supply supply);
 }

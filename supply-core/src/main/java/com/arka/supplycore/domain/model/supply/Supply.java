@@ -63,9 +63,9 @@ public class Supply {
     summarizeDetails();
   }
 
-  public void removeDetail(SupplyDetailView supplyDetail) throws IllegalStateException {
+  public void removeDetail(SupplyDetailView supplyDetail) throws BusinessException, IllegalStateException {
     if (!canAlterSupply()) {
-      throw new IllegalStateException(CANT_ALTER_SUPPLY);
+      throw new BusinessException(CANT_ALTER_SUPPLY);
     }
 
     SupplyDetail detail = findDetail(supplyDetail.getProductId());
