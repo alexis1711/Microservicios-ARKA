@@ -4,6 +4,7 @@ import com.arka.supplycore.application.catalog.InventoryCatalog;
 import com.arka.supplycore.application.service.ProductValidationService;
 import com.arka.supplycore.application.service.SupplyOrderValidationService;
 import com.arka.supplycore.application.usecase.AddDetailsToOrder;
+import com.arka.supplycore.application.usecase.CancelSupplyOrder;
 import com.arka.supplycore.application.usecase.DeleteDetailItems;
 import com.arka.supplycore.application.usecase.ProcessSupply;
 import com.arka.supplycore.application.usecase.RegisterSupplyOrder;
@@ -46,5 +47,10 @@ public class SupplyUseCaseProducer {
   @Bean
   public ProcessSupply processSupply() {
     return new ProcessSupply(supplyRepository, supplyOrderValidationService, inventoryCatalog);
+  }
+
+  @Bean
+  public CancelSupplyOrder cancelSupplyOrder() {
+    return new CancelSupplyOrder(supplyRepository, supplyOrderValidationService);
   }
 }

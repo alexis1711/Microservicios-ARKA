@@ -86,6 +86,8 @@ public class Supply {
         throw new IllegalStateException("The supply has been processed");
       case CREATED:
         status = SupplyStatus.CANCELLED;
+        details.clear();
+        summarizeDetails();
         break;
       default:
         throw new IllegalStateException("The supply is in an unknown status");
@@ -115,7 +117,7 @@ public class Supply {
   protected void summarizeDetails() {
     total = details.stream()
       .map(SupplyDetail::subtotal)
-      .reduce(BigDecimal.ZERO, BigDecimal::add);
+      .reduce(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), BigDecimal::add);
   }
 
   public String getSupplyId() {

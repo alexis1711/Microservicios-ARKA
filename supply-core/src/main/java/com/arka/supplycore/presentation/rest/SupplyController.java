@@ -4,6 +4,7 @@ import com.arka.supplycore.application.dto.AlterDetailOutput;
 import com.arka.supplycore.application.dto.FailedProductDto;
 import com.arka.supplycore.application.dto.SupplyInput;
 import com.arka.supplycore.application.usecase.AddDetailsToOrder;
+import com.arka.supplycore.application.usecase.CancelSupplyOrder;
 import com.arka.supplycore.application.usecase.DeleteDetailItems;
 import com.arka.supplycore.application.usecase.ProcessSupply;
 import com.arka.supplycore.application.usecase.RegisterSupplyOrder;
@@ -38,6 +39,7 @@ public class SupplyController {
   private final UpdateOrderDetails updateOrderDetails;
   private final DeleteDetailItems deleteDetailItems;
   private final ProcessSupply processSupply;
+  private final CancelSupplyOrder cancelSupplyOrder;
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<Map<String, String>>> create() {
@@ -82,6 +84,13 @@ public class SupplyController {
     return Mono.fromCallable(() -> processSupply.execute(supplyId))
       .map(supplyControllerMapper::toProcessedSupply)
       .map(ResponseEntity::ok)
+      .subscribeOn(Schedulers.boundedElastic());
+  }
+
+  @PostMapping(value = "/{supplyId}/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<Void>> cancel(@PathVariable String supplyId) {
+    return Mono.fromCallable(() -> cancelSupplyOrder.execute(supplyId))
+      .then(Mono.just(ResponseEntity.ok((Void) null)))
       .subscribeOn(Schedulers.boundedElastic());
   }
 
