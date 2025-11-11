@@ -1,0 +1,58 @@
+name: Deploy supply Service to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "supply-core/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+
+      - name: Grant execute permission for Gradle wrapper
+        working-directory: ./suply-core
+        run: chmod +x gradlew
+
+      - name: Build JAR with Gradle
+        working-directory: ./suply-core
+        run: ./gradlew clean build -x test
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/supply-service:latest ./suply-core
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Push image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/supply-service:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST3 }}
+          username: ${{ secrets.EC2_USER3 }}
+          key: ${{ secrets.EC2_SSH_KEY3 }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/supply-service:latest
+            docker stop suply-service || true
+            docker rm supply-service || true
+            docker run -d \
+              --name supply-service \
+              -p 8086:8080 \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              -e AWS_REGION=us-east-2 \
+              -e JAVA_OPTS="-Xms256m -Xmx512m" \
+              ${{ secrets.DOCKERHUB_USERNAME }}/supply-service:latest
