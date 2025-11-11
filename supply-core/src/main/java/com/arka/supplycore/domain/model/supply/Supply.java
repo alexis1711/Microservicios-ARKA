@@ -92,13 +92,16 @@ public class Supply {
     }
   }
 
-  public void processSupply() {
+  public void processSupply() throws BusinessException {
     switch (status) {
       case CANCELLED:
         throw new IllegalStateException("The supply has been cancelled");
       case RECEIVED:
         throw new IllegalStateException("The supply has been processed");
       case CREATED:
+        if (total.compareTo(BigDecimal.ZERO) == 0 || details.isEmpty()) {
+          throw new BusinessException("The supply order is empty");
+        }
         status = SupplyStatus.RECEIVED;
         break;
       default:

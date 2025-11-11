@@ -1,9 +1,11 @@
 package com.arka.supplycore.infrastructure.config;
 
+import com.arka.supplycore.application.catalog.InventoryCatalog;
 import com.arka.supplycore.application.service.ProductValidationService;
 import com.arka.supplycore.application.service.SupplyOrderValidationService;
 import com.arka.supplycore.application.usecase.AddDetailsToOrder;
 import com.arka.supplycore.application.usecase.DeleteDetailItems;
+import com.arka.supplycore.application.usecase.ProcessSupply;
 import com.arka.supplycore.application.usecase.RegisterSupplyOrder;
 import com.arka.supplycore.application.usecase.UpdateOrderDetails;
 import com.arka.supplycore.domain.commons.IdGenerator;
@@ -19,6 +21,7 @@ public class SupplyUseCaseProducer {
   private final IdGenerator idGenerator;
   private final SupplyOrderValidationService supplyOrderValidationService;
   private final ProductValidationService productValidationService;
+  private final InventoryCatalog inventoryCatalog;
 
   @Bean
   public RegisterSupplyOrder registerSupplyOrder() {
@@ -38,5 +41,10 @@ public class SupplyUseCaseProducer {
   @Bean
   public DeleteDetailItems deleteDetailItems() {
     return new DeleteDetailItems(supplyRepository, supplyOrderValidationService);
+  }
+
+  @Bean
+  public ProcessSupply processSupply() {
+    return new ProcessSupply(supplyRepository, supplyOrderValidationService, inventoryCatalog);
   }
 }

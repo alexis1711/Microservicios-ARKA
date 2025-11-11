@@ -29,11 +29,6 @@ public class SupplyRepositoryAdapter implements SupplyRepository {
   }
 
   @Override
-  public void update(Supply supply) {
-    // TODO: Add update database
-  }
-
-  @Override
   public void delete(Supply supply) {
     // TODO: Delete in database repo
   }

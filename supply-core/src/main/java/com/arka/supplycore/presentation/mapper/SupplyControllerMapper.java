@@ -4,6 +4,8 @@ import com.arka.supplycore.application.dto.AlterDetailOutput;
 import com.arka.supplycore.application.dto.FailedProductDto;
 import com.arka.supplycore.application.dto.ProcessedProductDTO;
 import com.arka.supplycore.application.dto.SupplyInput;
+import com.arka.supplycore.domain.model.supply.Supply;
+import com.arka.supplycore.presentation.dto.ProcessedSupply;
 import com.arka.supplycore.presentation.dto.SupplyDetailItemDTO;
 import com.arka.supplycore.presentation.dto.SupplyDetailResponseDTO;
 import com.arka.supplycore.presentation.dto.SupplyProductDetailResponseDTO;
@@ -35,4 +37,7 @@ public interface SupplyControllerMapper {
   }
 
   SupplyInput toDetailItemInput(SupplyDetailItemDTO supplyDetail);
+
+
+  ProcessedSupply toProcessedSupply(Supply supply);
 }
