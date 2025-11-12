@@ -10,6 +10,7 @@ description = "supply-core"
 
 val mapStructVersion = "1.6.3"
 val uuidLibVersion = "5.1.1"
+val awsVersion = "3.1.1"
 
 java {
     toolchain {
@@ -32,6 +33,7 @@ dependencies {
     implementation("org.mapstruct:mapstruct:$mapStructVersion")
     implementation("com.fasterxml.uuid:java-uuid-generator:$uuidLibVersion")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-parameter-store:$awsVersion")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.projectlombok:lombok")
